@@ -6,7 +6,7 @@
 2. Tried to run voice input on it .
 3. Process to set-up the project on any laptop:-
 
-# EUC Project Setup Guide
+**EUC Project Setup Guide**
 
 ### Prerequisites:
 1. **Download & Install:**
