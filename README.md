@@ -75,7 +75,7 @@
 
 
 
-### 18-10-24
+# 18-10-24
 **API connection for query suggestor**
 **main file:**
 from fastapi import FastAPI
@@ -112,7 +112,7 @@ from .model import QueryModel
 
 
 
-### 17-10-24
+# 17-10-24
 **how to connect local env to public accesible**
 
 import requests
