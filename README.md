@@ -73,3 +73,55 @@
 1. **Download & Install FFMPEG.**
 2. Set up the path variable for FFMPEG.
 
+
+
+### 18-10-24
+**API connection for query suggestor**
+**main file:**
+from fastapi import FastAPI
+from models import QueryModel
+from typing import List
+import ollama
+
+app = FastAPI()
+
+def generate_similar_queries(input_question: str) -> List[str]:
+        prompt = f"generate 5 different versions of below input question: '{input_question}'."
+        response = ollama.chat(model='llama3', messages=[
+            {"role": "system", "content": "You are an AI Assistant for suggesting similar queries."},
+            {"role": "user", "content": prompt} 
+        ])
+        suggested_queries = response['message']['content'].replace('*', '').strip().split('\n')
+        suggested_queries_list = [line.split('. ', 1)[1] for line in suggested_queries if line.strip().startswith(('1.', '2.', '3.', '4.', '5.'))]
+        return suggested_queries_list
+
+@app.post("/suggest-queries/")
+def suggest_queries(query_model: QueryModel):
+    query = query_model.query
+    suggested_queries = generate_similar_queries(query)
+    return {"suggested_queries": suggested_queries,"asked_query":query}   
+
+**model**
+from pydantic import BaseModel
+
+class QueryModel(BaseModel):
+    query: str
+
+**__init__.py**
+from .model import QueryModel
+
+
+
+### 17-10-24
+**how to connect local env to public accesible**
+
+import requests
+url="http://192.168.0.216:8000/suggest-queries/"
+
+payload = {'query': 'who are you?'}  # This is the correct dictionary format
+headers = {'Content-Type': 'application/json'}  # If the API expects JSON
+response = requests.post(url, json=payload, headers=headers)
+
+print(response.status_code)
+print(response.text)
+
