@@ -76,7 +76,9 @@
 
 
 # 18-10-24
+
 **API connection for query suggestor**
+
 **main file:**
 from fastapi import FastAPI
 from models import QueryModel
