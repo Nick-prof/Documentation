@@ -130,7 +130,9 @@ print(response.text)
 
 # 12-11-24
 **Implemented pytest**
+
 **note**
+
 1.for pytesting install - pytest and pip install pytest httpx pytest-asyncio
 2. pytest to look for tests in the tests/ directory and recognize files that start with test_>>>always keep name of the file whether starting with test or ending with test
 
