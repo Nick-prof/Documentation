@@ -128,7 +128,7 @@ print(response.status_code)
 print(response.text)
 
 
-#12-11-24
+# 12-11-24
 **Implemented pytest**
 **note**
 1.for pytesting install - pytest and pip install pytest httpx pytest-asyncio
@@ -173,7 +173,7 @@ def test_query_context_empty_payload():
 
     
 
-#13-11-24
+# 13-11-24
 **Implemented try-exception block**
 
    try:
