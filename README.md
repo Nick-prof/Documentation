@@ -127,3 +127,63 @@ response = requests.post(url, json=payload, headers=headers)
 print(response.status_code)
 print(response.text)
 
+
+#12-11-24
+**Implemented pytest**
+**note**
+1.for pytesting install - pytest and pip install pytest httpx pytest-asyncio
+2. pytest to look for tests in the tests/ directory and recognize files that start with test_>>>always keep name of the file whether starting with test or ending with test
+
+
+from fastapi.testclient import TestClient
+from main import app  
+
+client = TestClient(app)
+
+def test_query_context_success():
+    payload = {
+        "query": "Example query",
+        "query_class": "class_a"
+    }
+    response = client.post("/query-context", json=payload)
+    assert response.status_code == 200
+    # data = response.json()
+    # assert data["query"] == "Example query"
+    # assert "context" in data  
+
+def test_query_context_missing_field():
+    payload = {
+        "query_class": "class_a"
+    }
+    response = client.post("/query-context", json=payload)
+    assert response.status_code == 422 
+
+def test_query_context_invalid_data():
+    payload = {
+        "query": "Example query",
+        "query_class": 12345 
+    }
+    response = client.post("/query-context", json=payload)
+    assert response.status_code == 422  
+
+def test_query_context_empty_payload():
+    response = client.post("/query-context", json={})
+    assert response.status_code == 422
+
+
+    
+
+#13-11-24
+**Implemented try-exception block**
+
+   try:
+        query = payload.query
+        classified_response = classify_question(query).lower()
+        if classified_response == "org" or classified_response == "tools":
+            response = query_rephraser_core(classified_response.lower(), query)
+        else:
+            response = query
+        return QueryRephraserResponse(query=query, rephrased_query=response)
+    except exception as e:
+        raise HTTPException(status_code=500)
+
