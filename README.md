@@ -189,3 +189,5 @@ def test_query_context_empty_payload():
     except exception as e:
         raise HTTPException(status_code=500)
 
+# 14-11-24
+**pytest integration to all the microservies**
