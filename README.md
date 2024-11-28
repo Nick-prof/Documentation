@@ -1,85 +1,86 @@
-# Documentation
+# EUC Project Setup Guide
 
-# 25-9-2024
+## 25-09-2024
 
-1. Set up the DELL Laptop with the final code.
-2. Tried to run voice input on it .
-3. Process to set-up the project on any laptop:-
+### Summary
+1. Set up the DELL Laptop with the final project code.
+2. Successfully tested voice input functionality.
+3. Documented the process for setting up the project on any laptop.
 
-**EUC Project Setup Guide**
-
-### Prerequisites:
+### Prerequisites
 1. **Download & Install:**
    - [VS Code](https://code.visualstudio.com/)
-   - [Python 3.10 (specifically)](https://www.python.org/downloads/)
+   - [Python 3.10](https://www.python.org/downloads/)
    - [GIT (64-bit)](https://git-scm.com/)
    - [HWinfo (Local U.S)](https://www.hwinfo.com/download/)
    - [Node.js 20 (LTS)](https://nodejs.org/)
-   - [OLLAMA (Windows)](https://ollama.com/)  
-     - To verify installation: Run `ollama run llama3` in the terminal.
+   - [OLLAMA (Windows)](https://ollama.com/)
+     - Verify installation by running: `ollama run llama3`.
 
 2. **Restart the Laptop.**
 
-### Project Setup:
+### Project Setup
 1. **Clone the Repository:**
-   - Navigate to `C:/projects/` (or your preferred directory).
-   - Clone the repo into a new folder:
+   - Navigate to your preferred directory, e.g., `C:/projects/`.
+   - Clone the repository:
      ```bash
      git clone <repository_url>
      ```
 
 2. **Create `llm_models` Folder:**
-   - Inside the `projects` folder, create a folder named `llm_models`.
+   - Inside `projects`, create a folder named `llm_models`.
 
-3. **Download the Required Models:**
-   - Inside `llm_models`, download the following from drive HARSHA'S DM:
+3. **Download Required Models:**
+   - From HARSHA'S drive, download the following models into `llm_models`:
      - BGE Large
      - BGE Reranker Large
-     - From `EUC` folder in drive, download:
-       - speech5_tts
-       - speech5_hifigan
-       - base.pt
-       - medium.en.pt
+   - From the `EUC` folder in the drive, download:
+     - speech5_tts
+     - speech5_hifigan
+     - base.pt
+     - medium.en.pt
 
-### Virtual Environment Setup:
+### Virtual Environment Setup
 1. **Open the project in VS Code.**
-2. In the terminal, run the following commands:
+2. Run the following commands:
    ```bash
    pip install venv
    python -m venv venv
-   venv/Scripts/activate  # Add this address to your current directory to activate the venv folder
+   source venv/bin/activate  # For Linux/MacOS
+   venv\Scripts\activate  # For Windows
    pip install -r requirements.txt
    ```
 
-### Node.js Setup:
-1. **Open a new terminal in VS Code.**
-2. Navigate to the euc-app-new directory:
+### Node.js Setup
+1. **Open a terminal in VS Code.**
+2. Navigate to the `euc-app-new` directory:
    ```bash
    cd euc-app-new
    npm i --force
    ```
 
-### HWinfo Setup:
-1. **Configure HWinfo:**
+### HWinfo Setup
+1. **Configuration Steps:**
    - Disable everything except total power consumption and GPU memory usage.
-   - Open settings, Enable toggling hot key then set up the hotkey as `Ctrl + Shift + .`
+   - Enable toggling hotkey in settings and set it as `Ctrl + Shift + .`.
    - Add HWinfo to startup.
-   - Set logging time limit 2 sec.
-   - Enable write direct to disk option.
-   - Open main setting , Enable the auto start option 
-   - Give full control access to `C:/Program Files/HWinfo 64/` for the user.
+   - Set logging time limit to 2 seconds.
+   - Enable "write direct to disk" option.
+   - Enable "auto start" in main settings.
+   - Grant full control access to `C:/Program Files/HWinfo 64/` for the user.
 
-### FFMPEG Setup:
+### FFMPEG Setup
 1. **Download & Install FFMPEG.**
 2. Set up the path variable for FFMPEG.
 
+---
 
+# 18-10-2024
 
-# 18-10-24
+## API Connection for Query Suggestor
 
-**API connection for query suggestor**
-
-**main file:**
+### `main.py`
+```python
 from fastapi import FastAPI
 from models import QueryModel
 from typing import List
@@ -88,55 +89,69 @@ import ollama
 app = FastAPI()
 
 def generate_similar_queries(input_question: str) -> List[str]:
-        prompt = f"generate 5 different versions of below input question: '{input_question}'."
-        response = ollama.chat(model='llama3', messages=[
-            {"role": "system", "content": "You are an AI Assistant for suggesting similar queries."},
-            {"role": "user", "content": prompt} 
-        ])
-        suggested_queries = response['message']['content'].replace('*', '').strip().split('\n')
-        suggested_queries_list = [line.split('. ', 1)[1] for line in suggested_queries if line.strip().startswith(('1.', '2.', '3.', '4.', '5.'))]
-        return suggested_queries_list
+    prompt = f"generate 5 different versions of below input question: '{input_question}'."
+    response = ollama.chat(model='llama3', messages=[
+        {"role": "system", "content": "You are an AI Assistant for suggesting similar queries."},
+        {"role": "user", "content": prompt} 
+    ])
+    suggested_queries = response['message']['content'].replace('*', '').strip().split('\n')
+    suggested_queries_list = [line.split('. ', 1)[1] for line in suggested_queries if line.strip().startswith(('1.', '2.', '3.', '4.', '5.'))]
+    return suggested_queries_list
 
 @app.post("/suggest-queries/")
 def suggest_queries(query_model: QueryModel):
     query = query_model.query
     suggested_queries = generate_similar_queries(query)
-    return {"suggested_queries": suggested_queries,"asked_query":query}   
+    return {"suggested_queries": suggested_queries, "asked_query": query}
+```
 
-**model**
+### `model.py`
+```python
 from pydantic import BaseModel
 
 class QueryModel(BaseModel):
     query: str
+```
 
-**__init__.py**
+### `__init__.py`
+```python
 from .model import QueryModel
+```
 
+---
 
+# 17-10-2024
 
-# 17-10-24
-**how to connect local env to public accesible**
+## Local Environment Connection for Public Access
 
+```python
 import requests
-url="http://192.168.0.216:8000/suggest-queries/"
 
-payload = {'query': 'who are you?'}  # This is the correct dictionary format
-headers = {'Content-Type': 'application/json'}  # If the API expects JSON
+url = "http://192.168.0.216:8000/suggest-queries/"
+payload = {"query": "who are you?"}  # Correct dictionary format
+headers = {'Content-Type': 'application/json'}
+
 response = requests.post(url, json=payload, headers=headers)
 
 print(response.status_code)
 print(response.text)
+```
 
+---
 
-# 12-11-24
-**Implemented pytest**
+# 12-11-2024
 
-**note**
+## Implemented Pytest
 
-1.for pytesting install - pytest and pip install pytest httpx pytest-asyncio
-2. pytest to look for tests in the tests/ directory and recognize files that start with test_>>>always keep name of the file whether starting with test or ending with test
+### Notes
+1. Install dependencies:
+   ```bash
+   pip install pytest pytest-httpx pytest-asyncio
+   ```
+2. Structure tests in the `tests/` directory and name files starting with or ending in `test_`.
 
-
+### Example Test Cases
+```python
 from fastapi.testclient import TestClient
 from main import app  
 
@@ -149,16 +164,13 @@ def test_query_context_success():
     }
     response = client.post("/query-context", json=payload)
     assert response.status_code == 200
-    # data = response.json()
-    # assert data["query"] == "Example query"
-    # assert "context" in data  
 
 def test_query_context_missing_field():
     payload = {
         "query_class": "class_a"
     }
     response = client.post("/query-context", json=payload)
-    assert response.status_code == 422 
+    assert response.status_code == 422
 
 def test_query_context_invalid_data():
     payload = {
@@ -166,33 +178,43 @@ def test_query_context_invalid_data():
         "query_class": 12345 
     }
     response = client.post("/query-context", json=payload)
-    assert response.status_code == 422  
+    assert response.status_code == 422
 
 def test_query_context_empty_payload():
     response = client.post("/query-context", json={})
     assert response.status_code == 422
+```
 
+---
 
-    
+# 13-11-2024
 
-# 13-11-24
-**Implemented try-exception block**
+## Implemented Try-Exception Block
 
-   try:
-        query = payload.query
-        classified_response = classify_question(query).lower()
-        if classified_response == "org" or classified_response == "tools":
-            response = query_rephraser_core(classified_response.lower(), query)
-        else:
-            response = query
-        return QueryRephraserResponse(query=query, rephrased_query=response)
-    except exception as e:
-        raise HTTPException(status_code=500)
+```python
+try:
+    query = payload.query
+    classified_response = classify_question(query).lower()
+    if classified_response in ["org", "tools"]:
+        response = query_rephraser_core(classified_response.lower(), query)
+    else:
+        response = query
+    return QueryRephraserResponse(query=query, rephrased_query=response)
+except Exception as e:
+    raise HTTPException(status_code=500)
+```
 
-# 14-11-24
-**pytest integration to all the microservies**
+---
 
-# 28-11-24: Snyk Testing and Environment Commands
+# 14-11-2024
+
+## Pytest Integration Across All Microservices
+
+---
+
+# 28-11-2024
+
+## Snyk Testing and Environment Commands
 
 ### Snyk Testing
 - **Snyk Usage:**
@@ -206,5 +228,3 @@ def test_query_context_empty_payload():
   - Lists all packages in the current environment.
 - **`pip freeze | grep openai`**:
   - Filters and lists packages related to OpenAI.
-
-
