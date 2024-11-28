@@ -191,3 +191,20 @@ def test_query_context_empty_payload():
 
 # 14-11-24
 **pytest integration to all the microservies**
+
+# 28-11-24: Snyk Testing and Environment Commands
+
+### Snyk Testing
+- **Snyk Usage:**
+  - Snyk is used for testing vulnerabilities.
+  - Key commands:
+    - `snyk test`: Tests for vulnerabilities.
+    - `snyk monitor`: Monitors for vulnerabilities and provides continuous tracking.
+
+### Environment Commands
+- **`pip freeze`**:
+  - Lists all packages in the current environment.
+- **`pip freeze | grep openai`**:
+  - Filters and lists packages related to OpenAI.
+
+
