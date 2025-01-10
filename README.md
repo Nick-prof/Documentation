@@ -228,3 +228,7 @@ except Exception as e:
   - Lists all packages in the current environment.
 - **`pip freeze | grep openai`**:
   - Filters and lists packages related to OpenAI.
+
+
+  ![image](https://github.com/user-attachments/assets/d6578025-a1a2-4998-89d3-ede667a60209)
+
