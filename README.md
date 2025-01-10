@@ -229,6 +229,100 @@ except Exception as e:
 - **`pip freeze | grep openai`**:
   - Filters and lists packages related to OpenAI.
 
+# 10-1-2025
+## Webhook Implementation
 
   ![image](https://github.com/user-attachments/assets/d6578025-a1a2-4998-89d3-ede667a60209)
+above is the structure for webhook 
+
+.env file wil contain as below:-
+  ![image](https://github.com/user-attachments/assets/231fc385-0fc5-46e1-a4c7-997797025c62)
+
+don't forget to create a __init__.py file which could be black or filled with created function in specific file 
+
+text_to_text.py will contain webhook calling  as below code snippet
+   
+from core.config import settings
+from utils.webhook import call_webhook
+
+
+    
+
+webhook_url = settings.webhook_url
+dry_run_folder_path = "/home/nvanjari/projects/euc_phase2/genai_services/Text-to-Text/data/ImgtoText_Small_Model_Outputs_20250107_102024"
+
+def process_text_to_text(images_folder_path,output_folder_path):
+    """
+    Runs image_to_text_small , image_to_text_medium and image_to_text_large sequentially.
+    Args:
+        images_folder_path (str): Path to the folder containing images.
+        output_folder_path (str): Path to the folder where outputs will be saved.
+    Returns:
+        dict: Results paths of created csv , which will be stored in output folder path.
+        Include a custom exception that triggers if the process fails, displaying the message:
+        "Insufficient memory detected [size]. The process will terminate."
+    """
+    try:
+        if settings.dry_run:
+            Small_Model_Metrics_CSV = dry_run_folder_path
+            Small_Model_Plots = ""
+        else:
+            from services.ttt_small import process_text_to_text_small
+            print("Running image_to_text_small...")
+            Small_Model_Metrics_CSV, Small_Model_Plots = process_text_to_text_small(images_folder_path, output_folder_path)
+
+        call_webhook(model_type="small", folder_path=Small_Model_Metrics_CSV)
+        
+    except Exception as e:
+        error = "Insufficient memory detected [0-5GB]. The process will terminate."
+        print(error)
+        raise error    
+  
+    try:
+        if settings.dry_run:
+            Medium_Model_Metrics_CSV = dry_run_folder_path
+            Medium_Model_Plots = ""
+        else:
+            from services.ttt_medium import process_text_to_text_medium
+            print("Running image_to_text_medium...")
+            Medium_Model_Metrics_CSV, Medium_Model_Plots = process_text_to_text_medium(images_folder_path, output_folder_path)
+
+        call_webhook(model_type="medium", folder_path=Medium_Model_Metrics_CSV)
+        
+
+    except Exception as e:
+        error = "Insufficient memory detected [5-16GB]. The process will terminate."
+        print(error)
+        raise error      
+
+    try:
+        if settings.dry_run:
+            Large_Model_Metrics_CSV = dry_run_folder_path
+            Large_Model_Plots = ""
+        else:
+            from services.ttt_large import process_text_to_text_large
+            print("Running image_to_text_large...")
+            Large_Model_Metrics_CSV, Large_Model_Plots = process_text_to_text_large(images_folder_path, output_folder_path)
+            print("Completed image_to_text_large.")
+
+        call_webhook(model_type="large", folder_path=Large_Model_Metrics_CSV)
+
+    except Exception as e:
+        error = "Insufficient memory detected [16-32GB]. The process will terminate."
+        print(error)
+        raise error     
+
+    return  (Small_Model_Metrics_CSV, Medium_Model_Metrics_CSV,Large_Model_Metrics_CSV),(Small_Model_Plots,Medium_Model_Plots,Large_Model_Plots)
+
+   ![image](https://github.com/user-attachments/assets/977286d6-e2ed-48d5-89b6-a84c45dea2eb)
+   above is the example for above reference
+
+   webhook.py is the main file where we will create and initialize webhook below it's shown how to create one
+   ![image](https://github.com/user-attachments/assets/8f01f5dd-03ea-4990-bb68-6fb877cd86e5)
+   ![image](https://github.com/user-attachments/assets/992e4248-9620-461f-8967-51cb1b91c33a)
+
+
+
+
+
 
