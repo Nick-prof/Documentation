@@ -322,7 +322,378 @@ def process_text_to_text(images_folder_path,output_folder_path):
    ![image](https://github.com/user-attachments/assets/992e4248-9620-461f-8967-51cb1b91c33a)
 
 
+# 15-01-2025
 
+# Docker Tutorial from Scratch
+
+## Step 1: What is Docker?
+Docker is an open-source platform designed to:
+1. Build applications using containers, which package all the dependencies (libraries, configurations, etc.) required for your application.
+2. Run these containers consistently across different environments (your local machine, cloud, or production servers).
+
+### Key Concepts:
+- **Images**: A lightweight, stand-alone, and executable package containing everything needed to run a piece of software (code, runtime, libraries, and system tools). Think of it as a blueprint.
+- **Containers**: Running instances of images. These are isolated environments where your application runs.
+- **Docker Engine**: The core software that runs and manages containers.
+- **Docker Hub**: A public repository where Docker images are stored.
+
+---
+
+## Step 2: Install Docker
+
+### Installation
+Follow these steps based on your operating system:
+
+#### For **Windows**:
+1. Download [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/).
+2. Ensure **WSL 2 (Windows Subsystem for Linux 2)** is installed. Docker Desktop uses WSL 2 for its backend.
+   - Follow [Microsoft's WSL 2 installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
+3. Install Docker Desktop by running the installer.
+4. During the installation, make sure you enable the **"Use WSL 2 instead of Hyper-V"** option.
+5. Start Docker Desktop after installation.
+
+#### For **macOS**:
+1. Download [Docker Desktop for macOS](https://www.docker.com/products/docker-desktop/).
+2. Run the `.dmg` file and follow the installation steps.
+3. Grant Docker the necessary permissions during installation.
+
+#### For **Linux**:
+1. Use your package manager to install Docker. For example:
+   - On **Ubuntu**:
+     ```bash
+     sudo apt-get update
+     sudo apt-get install docker.io
+     ```
+   - On **CentOS**:
+     ```bash
+     sudo yum install docker
+     ```
+2. Start the Docker service:
+   ```bash
+   sudo systemctl start docker
+   ```
+3. Enable Docker to start on boot:
+   ```bash
+   sudo systemctl enable docker
+   ```
+
+---
+
+## Step 3: Verify Installation
+
+1. Open your terminal or command prompt.
+2. Run:
+   ```bash
+   docker --version
+   ```
+   You should see a version number like `Docker version 24.xx.xx`.
+
+3. Test Docker by running its hello-world image:
+   ```bash
+   docker run hello-world
+   ```
+   This will:
+   - Pull the `hello-world` image from Docker Hub.
+   - Create and start a container using this image.
+   - Display a message in your terminal if successful.
+
+---
+
+## Step 4: Docker Basics
+
+### Core Docker Commands
+1. **Pull an image from Docker Hub**:
+   ```bash
+   docker pull <image-name>
+   ```
+   Example:
+   ```bash
+   docker pull nginx
+   ```
+   This pulls the `nginx` image (a lightweight web server).
+
+2. **List images on your system**:
+   ```bash
+   docker images
+   ```
+
+3. **Run a container from an image**:
+   ```bash
+   docker run <image-name>
+   ```
+   Example:
+   ```bash
+   docker run nginx
+   ```
+   This will start an `nginx` server in a container.
+
+4. **List running containers**:
+   ```bash
+   docker ps
+   ```
+
+5. **Stop a running container**:
+   ```bash
+   docker stop <container-id>
+   ```
+   Replace `<container-id>` with the ID shown in `docker ps`.
+
+6. **Remove a container**:
+   ```bash
+   docker rm <container-id>
+   ```
+
+7. **Remove an image**:
+   ```bash
+   docker rmi <image-id>
+   ```
+
+---
+
+## Step 5: Your First Custom Image
+
+Let’s create a simple Dockerfile to build a custom image. A Dockerfile is a text file with instructions to create an image.
+
+### Steps:
+1. Create a folder for your project:
+   ```bash
+   mkdir my-docker-app
+   cd my-docker-app
+   ```
+
+2. Create a `Dockerfile` in this folder:
+   ```bash
+   touch Dockerfile
+   ```
+
+3. Add the following content to the `Dockerfile`:
+   ```dockerfile
+   # Use an official Python runtime as a parent image
+   FROM python:3.9-slim
+
+   # Set the working directory in the container
+   WORKDIR /app
+
+   # Copy the current directory contents into the container
+   COPY . /app
+
+   # Install any needed packages specified in requirements.txt
+   RUN pip install --no-cache-dir -r requirements.txt
+
+   # Make port 80 available to the world outside this container
+   EXPOSE 80
+
+   # Define the command to run the app
+   CMD ["python", "app.py"]
+   ```
+
+4. Create a simple Python app (`app.py`) in the same folder:
+   ```python
+   from flask import Flask
+   app = Flask(__name__)
+
+   @app.route("/")
+   def home():
+       return "Hello, Docker!"
+
+   if __name__ == "__main__":
+       app.run(host="0.0.0.0", port=80)
+   ```
+
+5. Add a `requirements.txt` file with Flask:
+   ```
+   Flask==2.0.1
+   ```
+
+6. Build your Docker image:
+   ```bash
+   docker build -t my-python-app .
+   ```
+
+7. Run the container:
+   ```bash
+   docker run -p 4000:80 my-python-app
+   ```
+   - Visit `http://localhost:4000` in your browser. You’ll see “Hello, Docker!”.
+
+---
+
+## Step 6: Next Steps
+Once you’re comfortable running containers:
+1. Learn about **Docker Compose** for multi-container applications.
+2. Explore **Docker Volumes** for persistent data storage.
+3. Study **Docker Networking** for container communication.
+4. Practice pushing images to Docker Hub or a private registry.
+
+---
+
+
+# Docker and Virtual Machines (VMs)
+
+## Docker from Scratch
+
+### **1. What is Docker?**
+Docker is an open-source platform designed to:
+1. Build applications using containers, which package all the dependencies (libraries, configurations, etc.) required for your application.
+2. Run these containers consistently across different environments (your local machine, cloud, or production servers).
+
+#### **Key Concepts:**
+- **Images**: A lightweight, stand-alone, and executable package containing everything needed to run a piece of software (code, runtime, libraries, and system tools). Think of it as a blueprint.
+- **Containers**: Running instances of images. These are isolated environments where your application runs.
+- **Docker Engine**: The core software that runs and manages containers.
+- **Docker Hub**: A public repository where Docker images are stored.
+
+### **2. Installing Docker**
+
+#### For **Windows**:
+1. Download [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/).
+2. Ensure **WSL 2 (Windows Subsystem for Linux 2)** is installed. Docker Desktop uses WSL 2 for its backend.
+   - Follow [Microsoft's WSL 2 installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).
+3. Install Docker Desktop by running the installer.
+4. During the installation, enable the **"Use WSL 2 instead of Hyper-V"** option.
+5. Start Docker Desktop after installation.
+
+#### For **macOS**:
+1. Download [Docker Desktop for macOS](https://www.docker.com/products/docker-desktop/).
+2. Run the `.dmg` file and follow the installation steps.
+3. Grant Docker the necessary permissions during installation.
+
+#### For **Linux**:
+1. Use your package manager to install Docker. For example:
+   - On **Ubuntu**:
+     ```bash
+     sudo apt-get update
+     sudo apt-get install docker.io
+     ```
+   - On **CentOS**:
+     ```bash
+     sudo yum install docker
+     ```
+2. Start the Docker service:
+   ```bash
+   sudo systemctl start docker
+   ```
+3. Enable Docker to start on boot:
+   ```bash
+   sudo systemctl enable docker
+   ```
+
+### **3. Verify Installation**
+
+1. Open your terminal or command prompt.
+2. Run:
+   ```bash
+   docker --version
+   ```
+   You should see a version number like `Docker version 24.xx.xx`.
+
+3. Test Docker by running its hello-world image:
+   ```bash
+   docker run hello-world
+   ```
+   This will:
+   - Pull the `hello-world` image from Docker Hub.
+   - Create and start a container using this image.
+   - Display a message in your terminal if successful.
+
+### **4. Core Docker Commands**
+
+| Command                         | Description                                       |
+|---------------------------------|---------------------------------------------------|
+| `docker pull <image-name>`      | Pull an image from Docker Hub.                   |
+| `docker images`                 | List images on your system.                      |
+| `docker run <image-name>`       | Run a container from an image.                   |
+| `docker ps`                     | List running containers.                         |
+| `docker stop <container-id>`    | Stop a running container.                        |
+| `docker rm <container-id>`      | Remove a container.                              |
+| `docker rmi <image-id>`         | Remove an image.                                 |
+
+### **5. Dockerfile Example**
+
+Create a custom image with a Dockerfile:
+
+#### Dockerfile:
+```dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define the command to run the app
+CMD ["python", "app.py"]
+```
+
+#### Python Application (`app.py`):
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello, Docker!"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)
+```
+
+#### Build and Run:
+1. Build the image:
+   ```bash
+   docker build -t my-python-app .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 4000:80 my-python-app
+   ```
+   Visit `http://localhost:4000` to see "Hello, Docker!".
+
+---
+
+## Docker vs Virtual Machines (VMs)
+
+### **1. Architecture**
+
+#### **Docker (Containers):**
+- Containers share the **host operating system's kernel** and isolate applications at the **process level**.
+- Lightweight and fast.
+
+#### **Virtual Machines (VMs):**
+- VMs virtualize hardware and run a **full guest operating system** on top of the host OS.
+- Resource-heavy and slower startup.
+
+### **2. Resource Usage**
+
+| Feature             | Docker (Containers)       | Virtual Machines (VMs) |
+|---------------------|---------------------------|-------------------------|
+| **Size**            | MBs                       | GBs                     |
+| **Startup Time**    | Seconds                   | Minutes                 |
+| **Performance**     | Near-native               | Slower                  |
+
+### **3. Isolation**
+
+| Feature             | Docker                    | VMs                     |
+|---------------------|---------------------------|-------------------------|
+| **Level**           | Process-level isolation   | Full OS-level isolation |
+| **Security**        | Moderate (shared kernel)  | High (separate OS)      |
+
+### **4. Portability**
+
+| Feature             | Docker                    | VMs                     |
+|---------------------|---------------------------|-------------------------|
+| **Portability**     | High                      | Moderate                |
+| **Use Case**        | Microservices, CI/CD      | Legacy apps, multi-OS   |
+
+---
 
 
 
