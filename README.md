@@ -696,4 +696,270 @@ if __name__ == "__main__":
 ---
 
 
+# 19 feb 2025 
+
+# Understanding `*args` and `**kwargs` in Python
+
+## **1. Introduction**
+In Python, `*args` and `**kwargs` are used in function definitions to handle variable numbers of arguments.
+
+- `*args` allows a function to accept any number of positional arguments.
+- `**kwargs` allows a function to accept any number of keyword arguments.
+
+These are commonly used in scenarios where flexibility in function parameters is required.
+
+---
+
+## **2. Definition and Explanation**
+
+### **`*args` (Arbitrary Positional Arguments)**
+The `*args` syntax allows a function to accept multiple positional arguments without explicitly defining each one.
+
+- The `*args` parameter collects all additional positional arguments passed to the function as a tuple.
+- The function can then iterate over `args` to access individual values.
+
+#### **Example:**
+```python
+# Function using *args
+def add_numbers(*args):
+    return sum(args)
+
+print(add_numbers(2, 3, 5))  # Output: 10
+print(add_numbers(1, 2, 3, 4, 5, 6))  # Output: 21
+```
+
+#### **When to Use `*args`?**
+- When the number of arguments is unknown and may vary.
+- When passing multiple values dynamically.
+- When extending existing functions without modifying their signatures.
+
+---
+
+### **`**kwargs` (Arbitrary Keyword Arguments)**
+The `**kwargs` syntax allows a function to accept multiple keyword arguments (i.e., named arguments in key-value pairs).
+
+- The `**kwargs` parameter collects all additional keyword arguments as a dictionary.
+- The function can then access values using keys.
+
+#### **Example:**
+```python
+# Function using **kwargs
+def print_info(**kwargs):
+    for key, value in kwargs.items():
+        print(f"{key}: {value}")
+
+print_info(name="John", age=25, country="USA")
+```
+
+#### **Output:**
+```
+name: John
+age: 25
+country: USA
+```
+
+#### **When to Use `**kwargs`?**
+- When the number of named arguments is unknown.
+- When passing configurations or optional parameters.
+- When extending functions while maintaining flexibility.
+
+---
+
+## **3. Combining `*args` and `**kwargs`**
+A function can use both `*args` and `**kwargs` together to handle an arbitrary number of positional and keyword arguments.
+
+#### **Example:**
+```python
+def function_example(arg1, *args, kwarg1="default", **kwargs):
+    print("arg1:", arg1)
+    print("args:", args)
+    print("kwarg1:", kwarg1)
+    print("kwargs:", kwargs)
+
+function_example(1, 2, 3, 4, kwarg1="modified", key1="value1", key2="value2")
+```
+
+#### **Output:**
+```
+arg1: 1
+args: (2, 3, 4)
+kwarg1: modified
+kwargs: {'key1': 'value1', 'key2': 'value2'}
+```
+
+#### **Order of Parameters in Function Definition:**
+When using `*args` and `**kwargs`, the order should be:
+1. Regular parameters
+2. `*args` (Positional arguments)
+3. Default parameters
+4. `**kwargs` (Keyword arguments)
+
+---
+
+## **4. Practical Implementation in a Function**
+### **Example: Speech-to-Text Function**
+Let's correct and improve your function definition while implementing `*args` and `**kwargs` correctly.
+
+#### **Fixed Function:**
+```python
+def speech_to_text_small(audio_folder_path, output_folder_path, test_id, *args, **kwargs):
+    print("Audio Folder Path:", audio_folder_path)
+    print("Output Folder Path:", output_folder_path)
+    print("Test ID:", test_id)
+    
+    if args:
+        print("Additional Positional Arguments:", args)
+    
+    if kwargs:
+        print("Additional Keyword Arguments:")
+        for key, value in kwargs.items():
+            print(f"{key}: {value}")
+
+# Calling the function
+speech_to_text_small("/audio", "/output", "test_123", "extra_param", model="deep_speech", language="English")
+```
+
+#### **Output:**
+```
+Audio Folder Path: /audio
+Output Folder Path: /output
+Test ID: test_123
+Additional Positional Arguments: ('extra_param',)
+Additional Keyword Arguments:
+model: deep_speech
+language: English
+```
+
+---
+
+## **5. Summary**
+| Feature | `*args` | `**kwargs` |
+|---------|--------|------------|
+| Type | Tuple | Dictionary |
+| Accepts | Unlimited positional arguments | Unlimited keyword arguments |
+| Accessed As | `args[i]` (index-based) | `kwargs["key"]` (key-based) |
+| Use Case | When the number of arguments is unknown | When optional named parameters are needed |
+| Example Usage | `def func(*args):` | `def func(**kwargs):` |
+
+By understanding `*args` and `**kwargs`, you can write more flexible and reusable Python functions. 🚀
+
+---
+
+## **6. Further Reading**
+- [Python Official Documentation](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists)
+- [Python Function Arguments Guide](https://realpython.com/python-kwargs-and-args/)
+
+Happy coding! 🎯
+
+
+
+
+# Git Commands: Squash, Rebase, Merge & Conflict Resolution
+
+## 1. Git Squash
+### What is Git Squash?
+Git squash is used to combine multiple commits into a single commit, making the commit history cleaner.
+
+### How to Squash Commits?
+1. Identify the number of commits to squash:
+   ```sh
+   git log --oneline
+   ```
+2. Start an interactive rebase:
+   ```sh
+   git rebase -i HEAD~<number_of_commits>
+   ```
+3. In the interactive window, change `pick` to `squash (s)` for commits you want to merge.
+4. Save and close the editor.
+5. Edit the commit message if needed and save.
+
+### Example:
+```sh
+git rebase -i HEAD~3
+```
+
+## 2. Git Rebase
+### What is Git Rebase?
+Git rebase is used to integrate changes from one branch into another by applying commits sequentially.
+
+### How to Use Git Rebase?
+1. Switch to the branch you want to rebase:
+   ```sh
+   git checkout feature-branch
+   ```
+2. Rebase onto the target branch:
+   ```sh
+   git rebase main
+   ```
+3. If conflicts arise, resolve them and continue:
+   ```sh
+   git add .
+   git rebase --continue
+   ```
+4. If needed, you can abort the rebase:
+   ```sh
+   git rebase --abort
+   ```
+
+## 3. Git Merge
+### What is Git Merge?
+Git merge is used to combine changes from different branches into a single branch while preserving commit history.
+
+### How to Merge Branches?
+1. Switch to the target branch:
+   ```sh
+   git checkout main
+   ```
+2. Merge the source branch:
+   ```sh
+   git merge feature-branch
+   ```
+3. Resolve conflicts if they occur.
+4. Push the changes:
+   ```sh
+   git push origin main
+   ```
+
+## 4. Resolving Git Conflicts
+### What Causes Git Conflicts?
+Conflicts occur when two branches modify the same part of a file and Git cannot automatically merge them.
+
+### Steps to Resolve Git Conflicts:
+1. Identify conflicting files:
+   ```sh
+   git status
+   ```
+2. Open the conflicted files and look for conflict markers:
+   ```
+   <<<<<<< HEAD
+   (Your changes)
+   =======
+   (Other branch changes)
+   >>>>>>> branch-name
+   ```
+3. Edit the file to keep the correct changes.
+4. Mark conflicts as resolved:
+   ```sh
+   git add .
+   ```
+5. Continue the merge or rebase:
+   ```sh
+   git merge --continue
+   ```
+   or
+   ```sh
+   git rebase --continue
+   ```
+6. Push the resolved changes:
+   ```sh
+   git push origin branch-name
+   ```
+
+---
+This guide provides an in-depth explanation of Git squash, rebase, merge, and resolving conflicts. Following these practices ensures a clean and maintainable Git history.
+
+
+
+
+
 
